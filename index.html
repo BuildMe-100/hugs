@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f3ed" />
+    <meta name="description" content="Six little ways to spend a moment together. A playful animated world of hugs, kisses, dancing and coffee." />
+    <title>A little closer — little moments, together</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="header">
+        <a class="brand" href="/" aria-label="A little closer home"><span class="brand-flower">✳</span> a little closer<span class="brand-dot">.</span></a>
+        <div class="header-right"><span class="made-for">a tiny world for two</span><button id="sound" class="icon-button" aria-label="Turn sound on" aria-pressed="false" title="Sound off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 5 6 9H3v6h3l5 4zM16 9l5 6m0-6-5 6" /></svg></button></div>
+      </header>
+
+      <section class="intro" aria-labelledby="title">
+        <div class="eyebrow"><span></span> LITTLE MOMENTS, TOGETHER</div>
+        <h1 id="title">Love is in the <em>little things.</em><svg class="title-spark" viewBox="0 0 32 42" fill="none"><path d="m7 12 5 8M23 5l-3 12M30 25l-9 2" stroke="#c6a765" stroke-width="2.5" stroke-linecap="round"/></svg></h1>
+        <p>A hug. A happy dance. A laugh that lasts a little longer.<br class="desktop-break" /> Pick a moment and make a little magic.</p>
+      </section>
+
+      <section class="world" aria-label="Our little world">
+        <div class="world-top"><span class="world-label"><span class="live-dot"></span> OUR LITTLE WORLD</span><button id="reset" class="reset" title="Return to the beginning"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 6a7 7 0 1 1-1 7M4 2v5h5" /></svg> Start over</button></div>
+        <canvas id="world" width="1100" height="510" role="img" aria-label="An animated man with a backwards cap and a blonde woman in a purple sunflower dress stand on opposite blocks. Choose a moment below."></canvas>
+        <div class="scene-caption"><span class="caption-line"></span><span id="caption" role="status" aria-live="polite">A little space. A whole lot of possibility.</span><span class="caption-line"></span></div>
+        <button id="finish" class="finish" hidden>One more little moment <span>↗</span></button>
+        <div class="world-corner">you + me <span>♡</span></div>
+      </section>
+
+      <section class="moments" aria-labelledby="moments-title">
+        <div class="moments-heading"><h2 id="moments-title">What shall we do?</h2><span>Choose your little moment <span class="curved-arrow">↴</span></span></div>
+        <div id="choices" class="choices"></div>
+        <p class="hint"><span>♡</span> Stay as long as you like. Click the scene to come back.</p>
+      </section>
+      <footer><span>Made of small things & big feelings.</span><span class="footer-flower">✳</span><span>Always better, together.</span></footer>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

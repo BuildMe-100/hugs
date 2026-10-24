@@ -26,6 +26,10 @@ The production output is in `dist/`. Deploy its contents with any static web hos
 
 Pushing code to GitHub does not publish the website. To publish:
 
+For the simplest setup, choose **Deploy from a branch**, branch **main**, folder **/ (root)** in **Settings → Pages**. This app also runs directly from its source files without a build step. Its relative stylesheet and script paths work under `/hugs/`. GitHub automatically republishes this setup after a push.
+
+Alternatively, to publish the production Vite build with Actions:
+
 1. In the repository's **Settings → Pages**, select **GitHub Actions** as the build and deployment source.
 2. Open **Actions → Publish website → Run workflow**, select `main`, and run it.
 3. Wait for the workflow to succeed. Its deployment job provides the live website link.

@@ -11,7 +11,7 @@
   <body>
     <main class="page">
       <header class="header">
-        <a class="brand" href="/" aria-label="A little closer home"><span class="brand-flower">✳</span> a little closer<span class="brand-dot">.</span></a>
+        <a class="brand" href="./" aria-label="A little closer home"><span class="brand-flower">✳</span> a little closer<span class="brand-dot">.</span></a>
         <div class="header-right"><span class="made-for">a tiny world for two</span><button id="sound" class="icon-button" aria-label="Turn sound on" aria-pressed="false" title="Sound off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 5 6 9H3v6h3l5 4zM16 9l5 6m0-6-5 6" /></svg></button></div>
       </header>
 
@@ -19,6 +19,7 @@
         <div class="eyebrow"><span></span> LITTLE MOMENTS, TOGETHER</div>
         <h1 id="title">Love is in the <em>little things.</em><svg class="title-spark" viewBox="0 0 32 42" fill="none"><path d="m7 12 5 8M23 5l-3 12M30 25l-9 2" stroke="#c6a765" stroke-width="2.5" stroke-linecap="round"/></svg></h1>
         <p>A hug. A happy dance. A laugh that lasts a little longer.<br class="desktop-break" /> Pick a moment and make a little magic.</p>
+        <div id="received" class="received" hidden><span id="received-message"></span><small>Stay a while. Choose a moment below to send one back.</small></div>
       </section>
 
       <section class="world" aria-label="Our little world">
@@ -32,10 +33,25 @@
       <section class="moments" aria-labelledby="moments-title">
         <div class="moments-heading"><h2 id="moments-title">What shall we do?</h2><span>Choose your little moment <span class="curved-arrow">↴</span></span></div>
         <div id="choices" class="choices"></div>
+        <div class="send-bar">
+          <div><p id="send-heading">A little moment. A lovely message.</p><span id="send-description">Choose a moment above, then send it to someone.</span></div>
+          <button id="send" class="send-button" disabled><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m21 3-7 18-4-7-7-4zM10 14 21 3"/></svg><span id="send-label">Send a moment</span></button>
+        </div>
+        <p id="share-status" class="share-status" role="status" aria-live="polite"></p>
         <p class="hint"><span>♡</span> Stay as long as you like. Click the scene to come back.</p>
       </section>
       <footer><span>Made of small things & big feelings.</span><span class="footer-flower">✳</span><span>Always better, together.</span></footer>
     </main>
+    <dialog id="share-dialog" aria-labelledby="share-title" aria-describedby="share-description">
+      <form method="dialog"><button class="dialog-close" aria-label="Close sharing options">×</button></form>
+      <span class="dialog-heart" aria-hidden="true">♡</span>
+      <h2 id="share-title">Send a little moment</h2>
+      <p id="share-description">They’ll open straight into this moment, then they can explore or send one back.</p>
+      <label for="share-link">Your moment’s link</label>
+      <div class="link-row"><input id="share-link" type="url" readonly /><button id="copy-link" class="send-button">Copy link</button></div>
+      <a id="text-link" class="text-link" href="sms:">Open a text message <span aria-hidden="true">↗</span></a>
+      <p id="copy-status" role="status" aria-live="polite"></p>
+    </dialog>
     <script type="module" src="./src/main.js"></script>
   </body>
 </html>

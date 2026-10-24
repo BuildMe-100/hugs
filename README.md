@@ -13,6 +13,12 @@ npm run dev
 
 Choose Hug, Kiss, Dance, Bench, Sip, or Laugh. The scene enters, then loops until you click the scene, the return button, or press Escape. Characters return to their blocks before another scene begins. Start over resets immediately. Sound is optional and off by default.
 
+## Send a moment
+
+Choose a scene, then press **Send**. Supported browsers open the native share sheet, including Messages when available. Other browsers show a copyable link and an **Open a text message** option. The site never sends a message without the user's choice in their messaging app.
+
+Links such as `https://buildme-100.github.io/hugs/?moment=hug` automatically play that moment when opened. All six scene IDs are supported: `hug`, `kiss`, `dance`, `bench`, `sip`, `laugh`. Recipients can return to the blocks, try another scene, and use **Send … back** to share their own choice. No account, server, or personal information is needed; links only contain the scene ID. Unknown scene IDs open the normal home screen.
+
 ## Build
 
 ```sh

@@ -31,6 +31,12 @@ for (const [i, scene] of scenes.entries()) {
 }
 
 let state = { mode:'idle', scene:null, since:performance.now(), returnFrom:null };
+let selectedMoment = null;
+let sharing = false;
+const receivedMoment = scenes.find(s=>s.id === new URLSearchParams(location.search).get('moment'));
+const sendButton = document.querySelector('#send');
+const shareDialog = document.querySelector('#share-dialog');
+const shareStatus = document.querySelector('#share-status');
 let sound = false, audio;
 let now = 0;
 const home = [{x:235,y:353},{x:865,y:353}];
@@ -54,6 +60,9 @@ function updateControls() {
 }
 function selectScene(id) {
   if(state.mode!=='idle')return;
+  selectedMoment = scenes.find(s=>s.id===id);
+  if(!selectedMoment)return;
+  updateSendButton();
   state={mode:'enter',scene:id,since:performance.now(),returnFrom:null};
   caption.textContent='A little moment is on its way…';
   canvas.setAttribute('aria-label',`${scenes.find(s=>s.id===id).name} scene playing. Click the scene or the button to return to the blocks.`);
@@ -69,7 +78,58 @@ function finish() {
 function reset(){state={mode:'idle',scene:null,since:performance.now(),returnFrom:null};caption.textContent='A little space. A whole lot of possibility.';canvas.setAttribute('aria-label','The couple are back on their blocks. Choose a moment below.');updateControls()}
 document.querySelector('#reset').addEventListener('click',reset);
 finishButton.addEventListener('click',finish);canvas.addEventListener('click',finish);
-document.addEventListener('keydown',e=>{if(e.key==='Escape')finish()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!shareDialog.open)finish()});
+
+function updateSendButton() {
+  const scene=selectedMoment;
+  sendButton.disabled=!scene||sharing;
+  if(!scene)return;
+  const article=scene.id==='bench'?'a quiet bench moment':scene.id==='sip'?'a coffee moment':scene.id==='dance'?'a little dance':`a ${scene.name.toLowerCase()}`;
+  document.querySelector('#send-heading').textContent=`Send ${article}${receivedMoment?' back':''}.`;
+  document.querySelector('#send-description').textContent='They’ll open straight into this moment. No sign-up, just a smile.';
+  document.querySelector('#send-label').textContent=sharing?'Opening share…':`Send ${scene.name.toLowerCase()}${receivedMoment?' back':''}`;
+  shareStatus.textContent='';
+}
+function shareDetails() {
+  const scene=selectedMoment;
+  const url=new URL(location.href);
+  url.search='';url.hash='';url.searchParams.set('moment',scene.id);
+  const messages={hug:'Sending you a little hug. ♡',kiss:'A little kiss, just for you. ♡',dance:'Save a little dance for me. ♡',bench:'Let’s watch the world together for a moment. ♡',sip:'A little coffee date, just you and me. ♡',laugh:'A little laughter to brighten your day. ♡'};
+  return {title:'A little closer',text:messages[scene.id],url:url.href};
+}
+function showShareOptions(details) {
+  const titles={hug:'Send a little hug',kiss:'Send a little kiss',dance:'Send a little dance',bench:'Share a quiet moment',sip:'Send a coffee moment',laugh:'Send a little laughter'};
+  document.querySelector('#share-title').textContent=titles[selectedMoment.id];
+  document.querySelector('#share-link').value=details.url;
+  document.querySelector('#copy-status').textContent='';
+  document.querySelector('#copy-link').textContent='Copy link';
+  const ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  document.querySelector('#text-link').href=`sms:${ios?'&':'?'}body=${encodeURIComponent(`${details.text}\n${details.url}`)}`;
+  shareDialog.showModal();
+}
+sendButton.addEventListener('click',async()=>{
+  if(!selectedMoment||sharing)return;
+  const details=shareDetails();
+  if(!navigator.share){showShareOptions(details);return}
+  sharing=true;updateSendButton();
+  try{await navigator.share(details)}
+  catch(error){if(error.name!=='AbortError')showShareOptions(details)}
+  finally{sharing=false;updateSendButton()}
+});
+document.querySelector('#copy-link').addEventListener('click',async()=>{
+  const input=document.querySelector('#share-link');
+  let copied=false;
+  try{await navigator.clipboard.writeText(input.value);copied=true}
+  catch{input.focus();input.select();input.setSelectionRange(0,input.value.length);try{copied=document.execCommand('copy')}catch{/* Leave the link selected for manual copying. */}}
+  document.querySelector('#copy-status').textContent=copied?'Link copied. Paste it into a message to send your moment.':'Select and copy the link above, then paste it into your message.';
+  document.querySelector('#copy-link').textContent=copied?'Copied!':'Copy link';
+});
+shareDialog.addEventListener('click',e=>{
+  if(e.target!==shareDialog)return;
+  const r=shareDialog.getBoundingClientRect();
+  if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)shareDialog.close();
+});
+shareDialog.addEventListener('close',()=>sendButton.focus());
 
 function rounded(x,y,w,h,r,fill,stroke) {ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.stroke()}}
 function ellipse(x,y,rx,ry,fill){ctx.beginPath();ctx.ellipse(x,y,Math.max(.01,rx),Math.max(.01,ry),0,0,TAU);ctx.fillStyle=fill;ctx.fill()}
@@ -279,6 +339,13 @@ function render(timestamp){
   requestAnimationFrame(render);
 }
 requestAnimationFrame(render);
+
+if(receivedMoment){
+  const articles={hug:'a hug',kiss:'a kiss',dance:'a dance',bench:'a quiet moment',sip:'a coffee moment',laugh:'a little laughter'};
+  document.querySelector('#received-message').textContent=`Someone sent you ${articles[receivedMoment.id]}. ♡`;
+  document.querySelector('#received').hidden=false;
+  selectScene(receivedMoment.id);
+}
 
 // Read-only state is also useful to browser-based smoke checks.
 window.getMomentState=()=>({mode:state.mode,scene:state.scene});

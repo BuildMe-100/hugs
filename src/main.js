@@ -35,6 +35,8 @@ let selectedMoment = null;
 let sharing = false;
 const receivedMoment = scenes.find(s=>s.id === new URLSearchParams(location.search).get('moment'));
 const sendButton = document.querySelector('#send');
+const playButton = document.querySelector('#play');
+const nativeShareButton = document.querySelector('#share-more');
 const shareDialog = document.querySelector('#share-dialog');
 const shareStatus = document.querySelector('#share-status');
 let sound = false, audio;
@@ -54,20 +56,26 @@ document.querySelector('#sound').addEventListener('click',e=>{
   b.querySelector('path').setAttribute('d',sound?'M11 5 6 9H3v6h3l5 4zM16 8a6 6 0 0 1 0 8M19 5a10 10 0 0 1 0 14':'M11 5 6 9H3v6h3l5 4zM16 9l5 6m0-6-5 6');chime();
 });
 function updateControls() {
-  document.querySelectorAll('.choice').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.scene===state.scene));b.disabled=state.mode!=='idle'});
+  document.querySelectorAll('.choice').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.scene===selectedMoment?.id));b.disabled=false});
   finishButton.hidden=state.mode==='idle'||state.mode==='return';
   world.classList.toggle('active',!finishButton.hidden);
 }
-function selectScene(id) {
-  if(state.mode!=='idle')return;
+function selectScene(id, autoplay=false) {
   selectedMoment = scenes.find(s=>s.id===id);
   if(!selectedMoment)return;
+  reset();
+  caption.textContent=`${selectedMoment.name} selected. Play it here, or send a little love.`;
   updateSendButton();
-  state={mode:'enter',scene:id,since:performance.now(),returnFrom:null};
+  if(autoplay)playMoment();
+}
+function playMoment() {
+  if(!selectedMoment)return;
+  state={mode:'enter',scene:selectedMoment.id,since:performance.now(),returnFrom:null};
   caption.textContent='A little moment is on its way…';
-  canvas.setAttribute('aria-label',`${scenes.find(s=>s.id===id).name} scene playing. Click the scene or the button to return to the blocks.`);
+  canvas.setAttribute('aria-label',`${selectedMoment.name} scene playing. Click the scene or the button to return to the blocks.`);
   updateControls();chime();
 }
+playButton.addEventListener('click',playMoment);
 function finish() {
   if(state.mode==='idle'||state.mode==='return')return;
   const elapsed=(performance.now()-state.since)/1000;
@@ -82,12 +90,14 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!shareDialog.open)f
 
 function updateSendButton() {
   const scene=selectedMoment;
-  sendButton.disabled=!scene||sharing;
+  sendButton.disabled=!scene;
+  playButton.disabled=!scene;
   if(!scene)return;
   const article=scene.id==='bench'?'a quiet bench moment':scene.id==='sip'?'a coffee moment':scene.id==='dance'?'a little dance':`a ${scene.name.toLowerCase()}`;
   document.querySelector('#send-heading').textContent=`Send ${article}${receivedMoment?' back':''}.`;
-  document.querySelector('#send-description').textContent='They’ll open straight into this moment. No sign-up, just a smile.';
-  document.querySelector('#send-label').textContent=sharing?'Opening share…':`Send ${scene.name.toLowerCase()}${receivedMoment?' back':''}`;
+  document.querySelector('#send-description').textContent='Play it here, or send it. They’ll open straight into your moment.';
+  document.querySelector('#send-label').textContent=`Send ${scene.name.toLowerCase()}${receivedMoment?' back':''}`;
+  document.querySelector('#play-label').textContent=`Play ${scene.name.toLowerCase()}`;
   shareStatus.textContent='';
 }
 function shareDetails() {
@@ -105,16 +115,19 @@ function showShareOptions(details) {
   document.querySelector('#copy-link').textContent='Copy link';
   const ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
   document.querySelector('#text-link').href=`sms:${ios?'&':'?'}body=${encodeURIComponent(`${details.text}\n${details.url}`)}`;
+  nativeShareButton.hidden=!navigator.share;
   shareDialog.showModal();
 }
-sendButton.addEventListener('click',async()=>{
-  if(!selectedMoment||sharing)return;
+sendButton.addEventListener('click',()=>{
+  if(selectedMoment)showShareOptions(shareDetails());
+});
+nativeShareButton.addEventListener('click',async()=>{
+  if(!selectedMoment||sharing||!navigator.share)return;
   const details=shareDetails();
-  if(!navigator.share){showShareOptions(details);return}
-  sharing=true;updateSendButton();
+  sharing=true;nativeShareButton.disabled=true;
   try{await navigator.share(details)}
-  catch(error){if(error.name!=='AbortError')showShareOptions(details)}
-  finally{sharing=false;updateSendButton()}
+  catch(error){if(error.name!=='AbortError')document.querySelector('#copy-status').textContent='Sharing isn’t available here. Open a text message or copy the link instead.'}
+  finally{sharing=false;nativeShareButton.disabled=false}
 });
 document.querySelector('#copy-link').addEventListener('click',async()=>{
   const input=document.querySelector('#share-link');
@@ -344,7 +357,7 @@ if(receivedMoment){
   const articles={hug:'a hug',kiss:'a kiss',dance:'a dance',bench:'a quiet moment',sip:'a coffee moment',laugh:'a little laughter'};
   document.querySelector('#received-message').textContent=`Someone sent you ${articles[receivedMoment.id]}. ♡`;
   document.querySelector('#received').hidden=false;
-  selectScene(receivedMoment.id);
+  selectScene(receivedMoment.id,true);
 }
 
 // Read-only state is also useful to browser-based smoke checks.

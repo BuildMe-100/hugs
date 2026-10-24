@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#f7f3ed" />
     <meta name="description" content="Six little ways to spend a moment together. A playful animated world of hugs, kisses, dancing and coffee." />
     <title>A little closer — little moments, together</title>
-    <link rel="stylesheet" href="./src/style.css" />
+    <link rel="stylesheet" href="./src/style.css?v=choose-send-2" />
   </head>
   <body>
     <main class="page">
@@ -34,8 +34,11 @@
         <div class="moments-heading"><h2 id="moments-title">What shall we do?</h2><span>Choose your little moment <span class="curved-arrow">↴</span></span></div>
         <div id="choices" class="choices"></div>
         <div class="send-bar">
-          <div><p id="send-heading">A little moment. A lovely message.</p><span id="send-description">Choose a moment above, then send it to someone.</span></div>
-          <button id="send" class="send-button" disabled><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m21 3-7 18-4-7-7-4zM10 14 21 3"/></svg><span id="send-label">Send a moment</span></button>
+          <div><p id="send-heading">A little moment. A lovely message.</p><span id="send-description">Choose a moment, then play it here or send it to someone.</span></div>
+          <div class="moment-actions">
+            <button id="play" class="play-button" disabled><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="m8 4 12 8-12 8z"/></svg><span id="play-label">Play</span></button>
+            <button id="send" class="send-button" disabled><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m21 3-7 18-4-7-7-4zM10 14 21 3"/></svg><span id="send-label">Send a moment</span></button>
+          </div>
         </div>
         <p id="share-status" class="share-status" role="status" aria-live="polite"></p>
         <p class="hint"><span>♡</span> Stay as long as you like. Click the scene to come back.</p>
@@ -50,8 +53,9 @@
       <label for="share-link">Your moment’s link</label>
       <div class="link-row"><input id="share-link" type="url" readonly /><button id="copy-link" class="send-button">Copy link</button></div>
       <a id="text-link" class="text-link" href="sms:">Open a text message <span aria-hidden="true">↗</span></a>
+      <button id="share-more" class="text-link" hidden>More sharing options</button>
       <p id="copy-status" role="status" aria-live="polite"></p>
     </dialog>
-    <script type="module" src="./src/main.js"></script>
+    <script type="module" src="./src/main.js?v=choose-send-2"></script>
   </body>
 </html>
